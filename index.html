@@ -189,23 +189,25 @@ Jawab Inventori Minat Kerjaya
   <div id="result"></div>
 </section>
 
-<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-;
 <script>
-const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSub3juftvtY-SxOFoQOid1zuDFcA-8Rqj4wb88bOhzW7Y9b6xl4CmNhhX78OEMwmyk0lxeFZ81cTmc/pub?gid=1321206076&single=true&output=csv";
+const CSV_URL =
+"https://docs.google.com/spreadsheets/d/e/2PACX-1vSub3juftvtY-SxOFoQOid1zuDFcA-8Rqj4wb88bOhzW7Y9b6xl4CmNhhX78OEMwmyk0lxeFZ81cTmc/pub?gid=1321206076&single=true&output=csv";
 
 let dataGlobal = [];
 
 Papa.parse(CSV_URL, {
   download: true,
+  header: true,
   skipEmptyLines: true,
   complete: function(results) {
     dataGlobal = results.data;
-    console.log("CSV loaded:", dataGlobal.length, "rows");
+    console.log("CSV loaded:", dataGlobal.length);
+    console.log("Contoh baris:", dataGlobal[0]);
   }
 });
 
 function cari(){
+
   const nama = document.getElementById("namaInput").value
     .toLowerCase()
     .trim();
@@ -218,24 +220,29 @@ function cari(){
     return;
   }
 
-  for(let i = 1; i < dataGlobal.length; i++){
-    const row = dataGlobal[i];
-    if(!row || !row[0]) continue;
+  for(let i=0;i<dataGlobal.length;i++){
 
-    const namaSheet = row[0].toLowerCase().trim();
+    const row = dataGlobal[i];
+    if(!row || !row["Nama"]) continue;
+
+    const namaSheet = row["Nama"]
+      .toLowerCase()
+      .trim();
+
     if(namaSheet.includes(nama)){
+
       resultDiv.innerHTML = `
         <h3>Keputusan Inventori</h3>
-        <p><b>Nama:</b> ${row[0]}</p>
+        <p><b>Nama:</b> ${row["Nama"]}</p>
         <ul>
-          <li>Realistik: ${row[2]}</li>
-          <li>Investigatif: ${row[3]}</li>
-          <li>Artistik: ${row[4]}</li>
-          <li>Sosial: ${row[5]}</li>
-          <li>Enterprising: ${row[6]}</li>
-          <li>Konvensional: ${row[7]}</li>
+          <li>Realistik: ${row["Realistik"]}</li>
+          <li>Investigatif: ${row["Investigatif"]}</li>
+          <li>Artistik: ${row["Artistik"]}</li>
+          <li>Sosial: ${row["Sosial"]}</li>
+          <li>Enterprising: ${row["Enterprising"]}</li>
+          <li>Konvensional: ${row["Konvensional"]}</li>
         </ul>
-        <p><b>3 Minat Tertinggi:</b> ${row[8]}</p>
+        <p><b>3 Minat Tertinggi:</b> ${row["Top 3"] || row["Top3"]}</p>
       `;
       return;
     }
