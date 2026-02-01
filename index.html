@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<title>Website Kerjaya UBK SMK Kidurong</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body{
+margin:0;
+font-family:Arial, sans-serif;
+background:#f4f6fb;
+line-height:1.7;
+}
+
+header{
+background:linear-gradient(135deg,#1e3a8a,#2563eb);
+color:white;
+padding:25px;
+text-align:center;
+}
+
+header img{
+width:90px;
+margin-bottom:10px;
+}
+
+nav{
+background:#1e40af;
+display:flex;
+justify-content:center;
+flex-wrap:wrap;
+}
+
+nav a{
+color:white;
+padding:12px 18px;
+text-decoration:none;
+font-weight:bold;
+}
+
+nav a:hover{
+background:#172554;
+}
+
+.section{
+max-width:900px;
+margin:25px auto;
+background:white;
+padding:25px;
+border-radius:14px;
+box-shadow:0 5px 15px rgba(0,0,0,.1);
+}
+
+.section h3{
+color:#1e3a8a;
+}
+
+.btn{
+display:inline-block;
+background:#16a34a;
+color:white;
+padding:14px 22px;
+border-radius:10px;
+text-decoration:none;
+font-weight:bold;
+margin-top:15px;
+}
+
+.btn:hover{
+background:#15803d;
+}
+
+.motivasi{
+font-style:italic;
+color:#1e3a8a;
+font-weight:bold;
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:15px;
+}
+
+.card{
+background:#eef2ff;
+padding:15px;
+border-radius:12px;
+}
+
+footer{
+background:#1e3a8a;
+color:white;
+text-align:center;
+padding:15px;
+}
+
+.privasi{
+font-size:.9em;
+color:#444;
+}
+.filter-buttons button{
+  padding:8px 14px;
+  border:none;
+  border-radius:8px;
+  background:#2563eb;
+  color:white;
+  cursor:pointer;
+  margin:4px;
+}
+
+.filter-buttons button:hover{
+  background:#1e40af;
+}
+
+.hide{display:none;}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:15px;
+}
+
+th,td{
+  border:1px solid #ddd;
+  padding:8px;
+  text-align:left;
+}
+
+th{background:#eef2ff;}
+
+</style>
+</head>
+
+<body>
+
+<header>
+<img src="logo-smk-kidurong.png" alt="Logo SMK Kidurong">
+<h1>Website Kerjaya Murid</h1>
+<h2>Unit Bimbingan dan Kaunseling<br>SMK Kidurong</h2>
+<p>Membantu Murid Merancang Masa Depan Kerjaya</p>
+</header>
+
+<nav>
+<a href="#utama">Utama</a>
+<a href="#inventori">Inventori</a>
+<a href="#tafsiran">Tafsiran</a>
+<a href="#awam">Universiti Awam</a>
+<a href="#swasta">Universiti Swasta</a>
+<a href="#padanan-universiti">Padanan Kerjaya</a>
+<a href="#perbandingan">Perbandingan IPT</a>
+<a href="#ting5">Tingkatan 5</a>
+<a href="#ibubapa">Info Ibu Bapa</a>
+<a href="#hubungi">Hubungi UBK</a>
+</nav>
+
+<section id="utama" class="section">
+<h3>Selamat Datang</h3>
+<p>
+Portal ini dibangunkan oleh <strong>Unit Bimbingan dan Kaunseling SMK Kidurong</strong>
+untuk membantu murid mengenal pasti minat kerjaya serta merancang hala tuju
+pendidikan dengan lebih jelas dan yakin.
+</p>
+<p class="motivasi">
+“Kenali potensi diri, bina masa depan gemilang.”
+</p>
+</section>
+
+<section id="inventori" class="section">
+<h3>Inventori Minat Kerjaya (RIASEC)</h3>
+<p>
+Klik butang di bawah untuk menjawab Inventori Minat Kerjaya dan kenal pasti
+kecenderungan diri anda.
+</p>
+
+<a class="btn" href="https://forms.gle/bXvvNCSWt9KABG1Y7" target="_blank">
+Jawab Inventori Minat Kerjaya
+</a>
+</section>
+
+<section id="semak">
+  <h2>Semak Keputusan Inventori Kerjaya</h2>
+
+  <input type="text" id="namaInput" placeholder="Masukkan nama seperti dalam borang">
+  <button onclick="cari()">Semak</button>
+
+  <div id="result"></div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+;
+<script>
+const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSub3juftvtY-SxOFoQOid1zuDFcA-8Rqj4wb88bOhzW7Y9b6xl4CmNhhX78OEMwmyk0lxeFZ81cTmc/pub?gid=1321206076&single=true&output=csv";
+
+let dataGlobal = [];
+
+Papa.parse(CSV_URL, {
+  download: true,
+  skipEmptyLines: true,
+  complete: function(results) {
+    dataGlobal = results.data;
+    console.log("CSV loaded:", dataGlobal.length, "rows");
+  }
+});
+
+function cari(){
+
+  const nama = document.getElementById("namaInput").value
+    .toLowerCase()
+    .trim();
+
+  const resultDiv = document.getElementById("result");
+  resultDiv.innerHTML = "";
+
+  if(!nama){
+    resultDiv.innerHTML = "<p>Sila masukkan nama.</p>";
+    return;
+  }
+
+  for(let i=1;i<dataGlobal.length;i++){
+
+    const row = dataGlobal[i];
+    if(!row || !row[0]) continue;
+
+    const namaSheet = row[1].toLowerCase().trim();
+
+    if(namaSheet.includes(nama)){
+
+      resultDiv.innerHTML = `
+        <h3>Keputusan Inventori</h3>
+        <p><b>Nama:</b> ${row[1]}</p>
+
+        <ul>
+          <li>Realistik: ${row[2]}</li>
+	  <li>Investigatif: ${row[3]}</li>
+	  <li>Artistik: ${row[4]}</li>
+	  <li>Sosial: ${row[5]}</li>
+	  <li>Enterprising: ${row[6]}</li>
+	  <li>Konvensional: ${row[7]}</li>
+
+
+        </ul>
+
+        <p><b>3 Minat Tertinggi:</b> ${row[8]}</p>
+      `;
+      return;
+    }
+  }
+
+  resultDiv.innerHTML = "<p>❌ Nama tidak dijumpai.</p>";
+}
+</script>
+
+<section id="tafsiran" class="section">
+<h3>Tafsiran Minat Kerjaya</h3>
+
+<div class="grid">
+<div class="card"><b>Realistik</b><br>Teknikal, praktikal, mekanikal</div>
+<div class="card"><b>Investigatif</b><br>Sains, kajian, analisis</div>
+<div class="card"><b>Artistik</b><br>Seni, kreatif, reka bentuk</div>
+<div class="card"><b>Sosial</b><br>Pendidikan, khidmat masyarakat</div>
+<div class="card"><b>Enterprising</b><br>Perniagaan, kepimpinan</div>
+<div class="card"><b>Konvensional</b><br>Pentadbiran, data, pengurusan</div>
+</div>
+
+<p><em>
+Keputusan inventori akan dibincangkan bersama Guru Bimbingan dan Kaunseling
+dalam sesi kaunseling.
+</em></p>
+</section>
+
+<section id="awam" class="section">
+<h3>Universiti Awam Malaysia</h3>
+<ul>
+<li>Universiti Malaya (UM)</li>
+<li>Universiti Kebangsaan Malaysia (UKM)</li>
+<li>Universiti Sains Malaysia (USM)</li>
+<li>Universiti Putra Malaysia (UPM)</li>
+<li>Universiti Teknologi Malaysia (UTM)</li>
+<li>Universiti Pendidikan Sultan Idris (UPSI)</li>
+</ul>
+</section>
+
+<section id="swasta" class="section">
+<h3>Universiti Swasta Malaysia</h3>
+<ul>
+<li>Taylor’s University</li>
+<li>Sunway University</li>
+<li>INTI International University</li>
+<li>SEGi University</li>
+<li>Management & Science University (MSU)</li>
+<li>UCSI University</li>
+</ul>
+</section>
+
+<!-- ================================================= -->
+<!-- PADANAN UNIVERSITI AWAM & SWASTA MENGIKUT RIASEC -->
+<!-- ================================================= -->
+
+<section id="padanan-universiti" class="section">
+
+<h3>Padanan Universiti Awam & Swasta Mengikut Minat (RIASEC)</h3>
+
+<p>
+Bahagian ini membantu murid mengenal pasti laluan pengajian,
+contoh kursus serta universiti yang bersesuaian dengan minat kerjaya.
+</p>
+
+<hr>
+
+<h4>🔧 REALISTIK (Teknikal / Praktikal)</h4>
+
+<p><b>Universiti Awam:</b>
+<a href="https://www.utm.my" target="_blank">Universiti Teknologi Malaysia (UTM)</a>,
+<a href="https://www.umpsa.edu.my" target="_blank">Universiti Malaysia Pahang Al-Sultan Abdullah (UMPSA)</a>
+</p>
+
+<p><b>Universiti Swasta:</b>
+<a href="https://www.ucsiuniversity.edu.my" target="_blank">UCSI University</a>,
+<a href="https://www.inti.edu.my" target="_blank">INTI International University</a>
+</p>
+
+<p><b>Kursus sesuai:</b> Kejuruteraan Awam, Mekanikal, Elektrik, Automotif, Mekatronik</p>
+<p><b>Syarat am:</b> Lulus SPM, Matematik Tambahan (kejuruteraan), STPM / Asasi / Diploma berkaitan.</p>
+
+<hr>
+
+<h4>🔬 INVESTIGATIF (Sains / Analisis)</h4>
+
+<p><b>Universiti Awam:</b>
+<a href="https://www.um.edu.my" target="_blank">Universiti Malaya (UM)</a>,
+<a href="https://www.usm.my" target="_blank">Universiti Sains Malaysia (USM)</a>
+</p>
+
+<p><b>Universiti Swasta:</b>
+<a href="https://sunway.edu.my/university" target="_blank">Sunway University</a>,
+<a href="https://www.monash.edu.my" target="_blank">Monash University Malaysia</a>
+</p>
+
+<p><b>Kursus sesuai:</b> Perubatan, Farmasi, Bioteknologi, Data Sains, Kimia</p>
+<p><b>Syarat am:</b> Aliran sains (Kimia penting), PNGK tinggi bagi kursus kompetitif.</p>
+
+<hr>
+
+<h4>🎨 ARTISTIK (Kreatif)</h4>
+
+<p><b>Universiti Awam:</b>
+<a href="https://www.uitm.edu.my" target="_blank">Universiti Teknologi MARA (UiTM)</a>
+</p>
+
+<p><b>Universiti Swasta:</b>
+<a href="https://university.taylors.edu.my" target="_blank">Taylor’s University</a>,
+<a href="https://www.limkokwing.net" target="_blank">Limkokwing University</a>
+</p>
+
+<p><b>Kursus sesuai:</b> Multimedia Kreatif, Reka Grafik, Seni Halus, Fesyen, Animasi</p>
+<p><b>Syarat am:</b> Portfolio (kursus seni), Lulus SPM, Asasi / Diploma berkaitan.</p>
+
+<hr>
+
+<h4>🤝 SOSIAL (Pendidikan / Khidmat)</h4>
+
+<p><b>Universiti Awam:</b>
+<a href="https://www.upsi.edu.my" target="_blank">Universiti Pendidikan Sultan Idris (UPSI)</a>,
+<a href="https://www.ukm.my" target="_blank">Universiti Kebangsaan Malaysia (UKM)</a>
+</p>
+
+<p><b>Universiti Swasta:</b>
+<a href="https://mahsa.edu.my" target="_blank">MAHSA University</a>,
+<a href="https://www.imu.edu.my" target="_blank">IMU University</a>
+</p>
+
+<p><b>Kursus sesuai:</b> Pendidikan, Psikologi, Kejururawatan, Kaunseling</p>
+<p><b>Syarat am:</b> Temu duga (kesihatan / pendidikan), subjek sains, pra-universiti.</p>
+
+<hr>
+
+<h4>💼 ENTERPRISING (Perniagaan / Kepimpinan)</h4>
+
+<p><b>Universiti Awam:</b>
+<a href="https://www.uum.edu.my" target="_blank">Universiti Utara Malaysia (UUM)</a>,
+<a href="https://www.um.edu.my" target="_blank">Universiti Malaya (UM)</a>
+</p>
+
+<p><b>Universiti Swasta:</b>
+<a href="https://sunway.edu.my/university" target="_blank">Sunway University</a>,
+<a href="https://www.msu.edu.my" target="_blank">Management & Science University (MSU)</a>
+</p>
+
+<p><b>Kursus sesuai:</b> Perniagaan, Keusahawanan, Pemasaran, Undang-undang</p>
+<p><b>Syarat am:</b> Laluan pra-universiti, Matematik digalakkan.</p>
+
+<hr>
+
+<h4>📂 KONVENSIONAL (Pentadbiran / Data)</h4>
+
+<p><b>Universiti Awam:</b>
+<a href="https://www.upm.edu.my" target="_blank">Universiti Putra Malaysia (UPM)</a>
+</p>
+
+<p><b>Universiti Swasta:</b>
+<a href="https://help.edu.my" target="_blank">HELP University</a>,
+<a href="https://www.segi.edu.my" target="_blank">SEGi University</a>
+</p>
+
+<p><b>Kursus sesuai:</b> Perakaunan, Statistik, Pentadbiran Perniagaan, Sistem Maklumat</p>
+<p><b>Syarat am:</b> Matematik penting, STPM / Asasi / Diploma setara.</p>
+
+<p><em>
+Nota: Maklumat kursus dan syarat kemasukan tertakluk kepada perubahan semasa universiti.
+Murid digalakkan berbincang bersama Guru Bimbingan dan Kaunseling sebelum membuat
+permohonan rasmi.
+</em></p>
+
+</section>
+
+<section id="perbandingan" class="section">
+
+<h3>Perbandingan Universiti Awam vs Swasta</h3>
+
+<table>
+<tr><th>Kategori</th><th>Awam</th><th>Swasta</th></tr>
+<tr><td>Yuran</td><td>Lebih rendah</td><td>Lebih tinggi</td></tr>
+<tr><td>Kemasukan</td><td>Kompetitif</td><td>Lebih fleksibel</td></tr>
+<tr><td>Biasiswa</td><td>Banyak</td><td>Terhad</td></tr>
+</table>
+
+</section>
+
+<section id="ting5" class="section">
+<h3>Maklumat Khas Tingkatan 5</h3>
+<ul>
+<li>Tarikh UPU & permohonan IPT</li>
+<li>Program asasi / matrikulasi</li>
+<li>Hari kerjaya sekolah</li>
+<li>Sesi kaunseling individu</li>
+</ul>
+</section>
+
+<section id="ibubapa" class="section">
+<h3>Maklumat Untuk Ibu Bapa</h3>
+<p>
+Ibu bapa digalakkan berbincang dengan anak tentang minat,
+kekuatan akademik dan laluan pengajian.
+</p>
+
+<ul>
+<li>Galakkan anak kenal potensi diri</li>
+<li>Rujuk UBK sebelum buat keputusan</li>
+<li>Sokongan emosi penting</li>
+</ul>
+</section>
+
+<section id="hubungi" class="section">
+<h3>Hubungi Kami</h3>
+<p>
+Unit Bimbingan dan Kaunseling<br>
+SMK Kidurong
+</p>
+
+<p class="privasi">
+Maklumat murid adalah sulit dan digunakan untuk tujuan
+bimbingan dan kaunseling sahaja.
+</p>
+</section>
+
+<footer>
+© Unit Bimbingan dan Kaunseling SMK Kidurong
+</footer>
+
+</body>
+</html>
