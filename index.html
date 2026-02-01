@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="ms">
 <head>
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <meta charset="UTF-8">
-<title>Website Kerjaya UBK SMK Kidurong</title>
+<title>Next Gen Career Hub UBK SMK Kidurong</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
@@ -205,7 +206,6 @@ Papa.parse(CSV_URL, {
 });
 
 function cari(){
-
   const nama = document.getElementById("namaInput").value
     .toLowerCase()
     .trim();
@@ -218,30 +218,23 @@ function cari(){
     return;
   }
 
-  for(let i=1;i<dataGlobal.length;i++){
-
+  for(let i = 1; i < dataGlobal.length; i++){
     const row = dataGlobal[i];
     if(!row || !row[0]) continue;
 
-    const namaSheet = row[1].toLowerCase().trim();
-
+    const namaSheet = row[0].toLowerCase().trim();
     if(namaSheet.includes(nama)){
-
       resultDiv.innerHTML = `
         <h3>Keputusan Inventori</h3>
-        <p><b>Nama:</b> ${row[1]}</p>
-
+        <p><b>Nama:</b> ${row[0]}</p>
         <ul>
           <li>Realistik: ${row[2]}</li>
-	  <li>Investigatif: ${row[3]}</li>
-	  <li>Artistik: ${row[4]}</li>
-	  <li>Sosial: ${row[5]}</li>
-	  <li>Enterprising: ${row[6]}</li>
-	  <li>Konvensional: ${row[7]}</li>
-
-
+          <li>Investigatif: ${row[3]}</li>
+          <li>Artistik: ${row[4]}</li>
+          <li>Sosial: ${row[5]}</li>
+          <li>Enterprising: ${row[6]}</li>
+          <li>Konvensional: ${row[7]}</li>
         </ul>
-
         <p><b>3 Minat Tertinggi:</b> ${row[8]}</p>
       `;
       return;
